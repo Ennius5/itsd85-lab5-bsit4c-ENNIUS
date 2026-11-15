@@ -85,6 +85,7 @@ var last_pause_action := ""  # "restart" or "quit" when scene changes are off (t
 var pauses_tree := true  # false online: the pause menu opens but the match keeps running
 var _pause_menu := PauseMenu.new()
 var _cctv: CctvFilter
+var _vignette: SpeedVignette  # the edge glow that warns the selected ship is going too fast
 var _flung_at: Dictionary = {}  # ship or asteroid -> msec it was last flung out of a black hole
 
 @onready var _spaces: Node2D = $Spaces
@@ -208,8 +209,11 @@ func _driven_by_anyone(ship: Ship) -> bool:
 
 
 func _process(_delta: float) -> void:
+	var mine: Variant = valets[0].ship if not valets.is_empty() else null
 	if _lot_edge:
-		_lot_edge.track(valets[0].ship if not valets.is_empty() else null)
+		_lot_edge.track(mine)
+	if _vignette:
+		_vignette.track(mine)
 
 
 func _physics_process(delta: float) -> void:
@@ -733,6 +737,10 @@ func _add_cctv() -> void:
 	add_child(_cctv)
 	move_child(_cctv, 0)
 	_pause_menu.cctv_changed.connect(_cctv.set_level)
+	_vignette = SpeedVignette.new()
+	_vignette.name = "SpeedVignette"
+	add_child(_vignette)
+	move_child(_vignette, 1)  # over the CCTV filter, under the HUD
 
 
 func _add_darkness() -> void:
