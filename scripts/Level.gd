@@ -214,6 +214,24 @@ func _process(_delta: float) -> void:
 		_lot_edge.track(mine)
 	if _vignette:
 		_vignette.track(mine)
+	for bay in arrival_bays():
+		bay.waiting = has_waiting_ship(bay)
+
+
+## The ARRIVALS markings in this lot. A duel overrides it with its two bays.
+func arrival_bays() -> Array[ArrivalBay]:
+	var bays: Array[ArrivalBay] = []
+	if _bay:
+		bays.append(_bay)
+	return bays
+
+
+## True when a ship that hasn't been picked up since it arrived sits in bay.
+func has_waiting_ship(bay: ArrivalBay) -> bool:
+	for ship: Ship in _ships.get_children():
+		if not ship.is_parked and not ship.driven_since_free and bay.touches(ship):
+			return true
+	return false
 
 
 func _physics_process(delta: float) -> void:
