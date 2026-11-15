@@ -45,7 +45,16 @@ func _on_difficulty_pressed(d: int) -> void:
 
 func build() -> void:
 	for child in _grid.get_children():
+		_grid.remove_child(child)
 		child.queue_free()
+	var tutorial := Button.new()
+	tutorial.name = "Tutorial"
+	tutorial.text = "Tutorial
+Learn the controls"
+	tutorial.custom_minimum_size = Vector2(220, 140)
+	tutorial.add_theme_font_size_override("font_size", 30)
+	tutorial.pressed.connect(_on_tutorial_pressed)
+	_grid.add_child(tutorial)
 	for i in range(1, GameState.TOTAL_LEVELS + 1):
 		var b := Button.new()
 		b.custom_minimum_size = Vector2(220, 140)  # big enough for a thumb
@@ -60,6 +69,10 @@ func build() -> void:
 			b.text = "Level %d\nStars: %d/3" % [i, GameState.best_stars.get(i, 0)]
 			b.pressed.connect(_on_level_pressed.bind(i))
 		_grid.add_child(b)
+
+
+func _on_tutorial_pressed() -> void:
+	get_tree().change_scene_to_file(GameState.TUTORIAL_SCENE)
 
 
 func _on_level_pressed(level: int) -> void:

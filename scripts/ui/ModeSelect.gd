@@ -26,9 +26,10 @@ func _ready() -> void:
 	_show_notice()
 
 
+## A first-time player goes straight into the tutorial; after that, Level Select.
 func _on_offline_pressed() -> void:
 	GameState.mode = "offline"
-	_go(LEVEL_SELECT)
+	_go(LEVEL_SELECT if GameState.tutorial_seen else GameState.TUTORIAL_SCENE)
 
 
 func _on_online_pressed() -> void:
