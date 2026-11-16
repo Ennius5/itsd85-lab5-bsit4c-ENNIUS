@@ -1,12 +1,13 @@
 class_name SpeedVignette
 extends CanvasLayer
 ## A subtle glow at the screen edges while a ship is selected: green when it's safe, yellow at
-## the speed where a bump starts to dent, red where a crash would cost 50 pay. Counts spin too.
+## the speed where a bump starts to dent, red at RED_SPEED. Counts spin too.
 
 const GREEN := Color(0.3, 1.0, 0.45)
 const YELLOW := Color(1.0, 0.85, 0.2)
 const RED := Color(1.0, 0.15, 0.1)
-const RED_COST := 50  # pure red: a crash now would cost this much pay
+const RED_SPEED := 600.0  # px/s: pure red (the user's call from playtesting)
+const GLOW_START := 1.0 - 0.3 / 1.7  # the glow fills only the outer part from centre to edge: 1.7x thinner than 30%
 const MIN_STRENGTH := 0.15
 const MAX_STRENGTH := 0.45
 const FADE_SECONDS := 0.2
@@ -27,6 +28,7 @@ func _init() -> void:
 	layer = 1  # with the CCTV filter; the level puts it after the filter and before the HUD
 	_mat.shader = load("res://scripts/fx/speed_vignette.gdshader")
 	_rect.material = _mat
+	_mat.set_shader_parameter("inner", GLOW_START)
 	_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
 	_rect.visible = false
@@ -36,7 +38,7 @@ func _init() -> void:
 ## The glow's colour at a danger speed (px/s): green → yellow → red, red beyond.
 static func color_for(speed: float) -> Color:
 	var safe := ShiftLedger.SAFE_IMPACT_SPEED
-	var red := ShiftLedger.impact_speed_for_cost(RED_COST)
+	var red := RED_SPEED
 	if speed <= safe:
 		return GREEN.lerp(YELLOW, clampf(speed / safe, 0.0, 1.0))
 	return YELLOW.lerp(RED, clampf((speed - safe) / (red - safe), 0.0, 1.0))
@@ -44,7 +46,7 @@ static func color_for(speed: float) -> Color:
 
 ## How strong the glow is at a danger speed: faint at rest, never more than MAX_STRENGTH.
 static func strength_for(speed: float) -> float:
-	var red := ShiftLedger.impact_speed_for_cost(RED_COST)
+	var red := RED_SPEED
 	return lerpf(MIN_STRENGTH, MAX_STRENGTH, clampf(speed / red, 0.0, 1.0))
 
 

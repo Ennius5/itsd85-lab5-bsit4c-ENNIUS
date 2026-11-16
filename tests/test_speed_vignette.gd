@@ -20,7 +20,8 @@ func test_red_speed_comes_from_the_ledger() -> void:
 func test_colour_ramp() -> void:
 	assert_eq(SpeedVignette.color_for(0.0), SpeedVignette.GREEN)
 	assert_eq(SpeedVignette.color_for(ShiftLedger.SAFE_IMPACT_SPEED), SpeedVignette.YELLOW)
-	assert_true(SpeedVignette.color_for(300.0).is_equal_approx(SpeedVignette.RED))
+	assert_false(SpeedVignette.color_for(300.0).is_equal_approx(SpeedVignette.RED), "not red yet at 300")
+	assert_true(SpeedVignette.color_for(600.0).is_equal_approx(SpeedVignette.RED), "red at 600 px/s")
 	assert_true(SpeedVignette.color_for(900.0).is_equal_approx(SpeedVignette.RED))
 	var mid := SpeedVignette.color_for(60.0)
 	assert_true(mid != SpeedVignette.GREEN and mid != SpeedVignette.YELLOW, "it blends")
@@ -28,6 +29,7 @@ func test_colour_ramp() -> void:
 
 func test_strength_stays_subtle_and_rises() -> void:
 	assert_true(SpeedVignette.strength_for(0.0) < SpeedVignette.strength_for(300.0))
+	assert_true(SpeedVignette.strength_for(300.0) < SpeedVignette.strength_for(600.0), "keeps rising to red")
 	assert_true(SpeedVignette.strength_for(900.0) <= 0.5)
 	assert_true(SpeedVignette.strength_for(0.0) > 0.0, "a faint green glow even at rest")
 
@@ -96,4 +98,14 @@ func test_frozen_mirror_ship_still_reads_its_speed() -> void:
 	v.track(ship, 1.0 / 30.0)
 	assert_true(v.measured_speed() >= 290.0, "got %s" % v.measured_speed())
 	ship.queue_free()
+	v.queue_free()
+
+
+func test_glow_band_is_thin() -> void:
+	# the band used to cover the outer 30% from centre to edge; the user asked for 1.7x thinner
+	assert_almost(1.0 - SpeedVignette.GLOW_START, 0.3 / 1.7, 0.001)
+	var v := SpeedVignette.new()
+	tree.root.add_child(v)
+	var mat := v.get_child(0).material as ShaderMaterial
+	assert_almost(float(mat.get_shader_parameter("inner")), SpeedVignette.GLOW_START, 0.001)
 	v.queue_free()
