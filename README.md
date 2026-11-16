@@ -2,14 +2,20 @@
 Team: Ethan Campomanes (solo developer: design, code, art, testing)   Section: BSIT 4C   Platform: Android (landscape)
 
 ## About the game
-A top-down zero-gravity valet parking game: park and retrieve spaceships of every shape and size in pitch-black space parking lots without denting anything, because damage comes out of your pay. Every ship is a mass pushed by thrusters drawn on its hull, so each one handles differently. Five levels each add one new idea (tips and retrievals, wrecks and radiation, a black hole, a gold-customer rush hour), and a LAN duel lets two phones compete on the same lot. Screenshots: _to be added in `docs/screenshots/`_.
+A top-down zero-gravity valet parking game: park and retrieve spaceships of every shape and size in pitch-black space parking lots without denting anything, because damage comes out of your pay. Every ship is a mass pushed by thrusters drawn on its hull, so each one handles differently. Five levels each add one new idea (tips and retrievals, wrecks and radiation, a black hole, a gold-customer rush hour), and a LAN duel lets two phones compete on the same lot. 
+
+![Level Select with the Tutorial tile](docs/screenshots/03-levelselect.png)
+![Level 4 – Gravity Well](docs/screenshots/07-level04.png)
+
+More screenshots are in [docs/screenshots/](docs/screenshots/).
 
 ## How to play
+- **Tutorial:** the first tap on **Play Offline** opens a 12-step practice lot that teaches every control. It can't be failed, and a pulsing ring and arrow show what to tap. You can replay it any time from the first tile on Level Select.
 - **Lot view:** tap a ship to take control (if several are under your finger, pick one from the list).
 - **Driving:** left pad thrusts forward/back and strafes left/right; hold the centre **STOP** to brake. Right buttons rotate; hold **Stop Spin** to stop turning.
 - **Parking:** stop the whole ship inside a space of its class (L / M / H) or larger; the space turns orange; press **Done** to park and get paid.
 - **Customers:** arrivals wait in the ARRIVALS bay; retrieval requests must be driven onto the EXIT pad. Tip tiers (bronze/silver/gold) pay extra; gold customers only tip in gold ★ spaces.
-- **Pay:** light bumps are free, hard hits dent the ship and cost pay. Pay at zero = fired.
+- **Pay:** light bumps are free, hard hits dent the ship and cost pay. Pay at zero = fired. While you drive, a thin glow at the screen edges goes from green to yellow (dents start) to red (an expensive crash).
 - **Levels:** serve every customer before the shift ends to clear a level and unlock the next one. Stars depend on earnings. Progress is saved on the phone.
 - **How to Play** (Mode Select or the pause menu) explains every element with pictures.
 
@@ -32,13 +38,17 @@ godot --headless --path . res://tests/TestRunner.tscn   # summary line: ALL TEST
 ```
 
 ## Download
-_Link to the v1.0 release APK – added at submission._
+Latest APK: the **v1.0 release** on this repository's [Releases page](../../releases) (debug-signed; allow "Install unknown apps" when asked).
 
 ## Playtest results
-_Top 3 findings and fixes – added after the Week 5 playtest. Kit: [docs/playtest/playtest-kit.md](docs/playtest/playtest-kit.md)._
+Full action plan: [docs/playtest/action-plan.md](docs/playtest/action-plan.md). Kit: [docs/playtest/playtest-kit.md](docs/playtest/playtest-kit.md). Phone test matrix: [docs/playtest/phone-test-matrix.md](docs/playtest/phone-test-matrix.md).
+
+1. **Players got stuck on the controls and skipped the guide.** Fix: a guided 12-step Tutorial that opens on the first Offline tap, plus an ARRIVALS bay that pulses while a ship waits. _Retest: pending._
+2. **No warning before hitting a wall.** Fix: a red lot-edge glow when the driven ship nears a wall. _Retest: pending._
+3. **Players thought the game was stuck while owners were away.** Fix: return countdowns on parked ships and a HUD "waiting" line. _Retest: pending._
 
 ## Credits
 See [docs/CREDITS.md](docs/CREDITS.md) (Kenney CC0 art and sound, ccMixter CC BY-NC 3.0 music, Orbitron SIL OFL font; ships and all other art original).
 
 ## Paper
-[docs/paper.pdf](docs/paper.pdf) (_in progress – outline in [docs/paper/outline.md](docs/paper/outline.md)_).
+[docs/paper.pdf](docs/paper.pdf) (_in progress_). The LaTeX source (IEEE conference template, built on Overleaf) is [docs/paper/paper.tex](docs/paper/paper.tex).
