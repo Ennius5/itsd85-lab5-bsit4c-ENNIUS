@@ -208,12 +208,12 @@ func _driven_by_anyone(ship: Ship) -> bool:
 	return false
 
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
 	var mine: Variant = valets[0].ship if not valets.is_empty() else null
 	if _lot_edge:
 		_lot_edge.track(mine)
 	if _vignette:
-		_vignette.track(mine)
+		_vignette.track(mine, delta)
 	for bay in arrival_bays():
 		bay.waiting = has_waiting_ship(bay)
 

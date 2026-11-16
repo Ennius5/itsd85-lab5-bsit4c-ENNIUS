@@ -282,3 +282,48 @@ func test_back_gesture_mid_tutorial_pauses_once() -> void:
 	assert_true(level._pause_menu.is_open(), "back pauses as in any level")
 	level.close_pause()
 	_done(level)
+
+
+func _to_step(level: TutorialLevel, n: int) -> void:
+	_select(level, level.drone)
+	_tick(level)
+	level.press_done()
+	_tick(level)
+	_select(level, level.drone)
+	_tick(level)
+	if n >= 5:
+		level.drone.global_position += Vector2.UP.rotated(level.drone.global_rotation) * 200.0
+		level.drone.linear_velocity = Vector2.UP.rotated(level.drone.global_rotation) * 200.0
+		level._check_step(1.0)
+
+
+func test_letting_go_in_step_five_points_back_at_the_ship() -> void:
+	var level := await _make()
+	_to_step(level, 5)
+	assert_eq(level.step, 5)
+	level.release_ship()
+	level._update_pointer()
+	level._update_sign()
+	assert_eq(level._pointer.target, level.drone)
+	assert_eq(level._sign.text, TutorialLevel.RETAKE_TEXT)
+	_done(level)
+
+
+func test_letting_go_in_step_four_points_back_at_the_ship() -> void:
+	var level := await _make()
+	_to_step(level, 4)
+	assert_eq(level.step, 4)
+	level.release_ship()
+	level._update_pointer()
+	assert_eq(level._pointer.target, level.drone)
+	_done(level)
+
+
+func test_forward_counts_along_the_current_nose() -> void:
+	var level := await _make()
+	_to_step(level, 4)
+	level.drone.global_rotation += PI  # it ended up facing back the way it came
+	level.drone.linear_velocity = Vector2.UP.rotated(level.drone.global_rotation) * 100.0
+	level._check_step(TutorialLevel.FORWARD_DISTANCE / 100.0 + 0.1)
+	assert_eq(level.step, 5, "forward means wherever the nose points now")
+	_done(level)

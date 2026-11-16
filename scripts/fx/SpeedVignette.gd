@@ -17,6 +17,10 @@ var _rect := ColorRect.new()
 var _mat := ShaderMaterial.new()
 var _fade := 0.0  # 0 = hidden, 1 = fully shown
 var _strength := MIN_STRENGTH
+var _last_ship: Object  # the ship tracked last frame, to measure how far it moved
+var _last_position := Vector2.ZERO
+var _last_rotation := 0.0
+var _measured := 0.0
 
 
 func _init() -> void:
@@ -44,14 +48,37 @@ static func strength_for(speed: float) -> float:
 	return lerpf(MIN_STRENGTH, MAX_STRENGTH, clampf(speed / red, 0.0, 1.0))
 
 
-## Follows ship's danger speed; null or freed hides the glow.
-func track(ship: Variant) -> void:  # untyped: a freed ship must not error
+## Follows ship's danger speed; null or freed hides the glow. delta (seconds since the last call)
+## lets it also measure how far the ship moved, for ships whose velocity isn't simulated here
+## (a duel guest's mirrored ships are frozen and moved by snapshots).
+func track(ship: Variant, delta: float = 0.0) -> void:  # untyped: a freed ship must not error
 	shown = is_instance_valid(ship) and ship is Ship
 	if not shown:
+		_last_ship = null
+		_measured = 0.0
 		return
-	var speed: float = (ship as Ship).danger_speed()
+	var s := ship as Ship
+	_measure(s, delta)
+	var speed: float = maxf(s.danger_speed(), _measured)
 	_mat.set_shader_parameter("tint", color_for(speed))
 	_strength = strength_for(speed)
+
+
+## The hull's fastest point's speed worked out from how far the ship moved since the last call.
+func measured_speed() -> float:
+	return _measured
+
+
+func _measure(ship: Ship, delta: float) -> void:
+	if ship == _last_ship and delta > 0.0:
+		var moved := ship.global_position.distance_to(_last_position)
+		var turned := absf(angle_difference(_last_rotation, ship.global_rotation))
+		_measured = (moved + turned * ship.hull_reach()) / delta
+	elif ship != _last_ship:
+		_measured = 0.0
+	_last_ship = ship
+	_last_position = ship.global_position
+	_last_rotation = ship.global_rotation
 
 
 func _process(delta: float) -> void:

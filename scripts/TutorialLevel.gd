@@ -22,6 +22,7 @@ const STEP_TEXT: Array[String] = [
 	"Rot L / Rot R turn the ship. It keeps turning until you hold Stop Spin.\nStop works the same way: hold it to stop sliding.",
 	"Now drive it to the EXIT",
 ]
+const RETAKE_TEXT := "Tap the ship to drive it again"  # shown when a driving step's ship was let go
 const LAST_STEP := 12
 const FORWARD_DISTANCE := 150.0  # px along the nose for "go forward"
 const RETURN_DELAY := 8.0  # seconds from parking until the owner wants the ship back
@@ -41,6 +42,7 @@ var _sign := TutorialSign.new()
 var _step_time := 0.0  # seconds in the current step
 var _forward_from := Vector2.ZERO  # step 4: where the drone was
 var _forward_dir := Vector2.UP
+var _forward_progress := 0.0  # step 4: px driven along wherever the nose points
 var _complete: TutorialComplete  # the end panel, once every step is done
 
 
@@ -95,8 +97,9 @@ func _process(delta: float) -> void:
 func _update_sign() -> void:
 	if step < 1 or step > LAST_STEP:
 		return
-	var text := STEP_TEXT[step - 1]
-	_sign.text = text
+	var text := RETAKE_TEXT if _ship_to_retake() else STEP_TEXT[step - 1]
+	if _sign.text != text:
+		_sign.text = text
 	var driving := valets[0].ship != null
 	_sign.visible = not driving
 	_hud.set_goal(text if driving else text.get_slice("
@@ -134,6 +137,9 @@ func _on_back_gesture() -> void:
 ## Advances through every step whose condition already holds.
 func _check_step(delta: float) -> void:
 	_step_time += delta
+	if step == 4 and _driving(drone):
+		var nose := Vector2.UP.rotated(drone.global_rotation)
+		_forward_progress += maxf(0.0, drone.linear_velocity.dot(nose)) * delta
 	while step <= LAST_STEP and _step_done():
 		_enter_step(step + 1)
 	_update_pointer()
@@ -156,6 +162,7 @@ func _enter_step(n: int) -> void:
 	match n:
 		4:
 			_forward_from = drone.global_position
+			_forward_progress = 0.0
 			_forward_dir = Vector2.UP.rotated(drone.global_rotation)
 		8:
 			_bring_spinner()
@@ -187,7 +194,7 @@ func _step_done() -> bool:
 		3:
 			return _driving(drone) or drone.is_parked
 		4:
-			return drone.is_parked or \
+			return drone.is_parked or _forward_progress >= FORWARD_DISTANCE or \
 					(drone.global_position - _forward_from).dot(_forward_dir) >= FORWARD_DISTANCE
 		5:
 			return drone.is_parked or customer_for(drone).requested
@@ -213,11 +220,27 @@ func _button(path: String) -> TouchScreenButton:
 	return _controls.get_node("Buttons/" + path) as TouchScreenButton
 
 
+## The ship a driving step needs in hand that the player has let go of, else null.
+func _ship_to_retake() -> Ship:
+	var ship: Ship = null
+	match step:
+		4, 5:
+			ship = drone
+		10, 11:
+			ship = spinner
+	if is_instance_valid(ship) and not _driving(ship) and not ship.is_parked:
+		return ship
+	return null
+
+
 ## Points at what to tap now; within a step it follows what the player has done so far.
 func _update_pointer() -> void:
 	var target: CanvasItem = null
 	var radius := 80.0
-	match step:
+	var retake := _ship_to_retake()
+	match -1 if retake else step:
+		-1:
+			target = retake
 		1, 3:
 			target = drone
 		2:

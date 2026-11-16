@@ -83,3 +83,17 @@ func test_level_shows_vignette_only_while_driving() -> void:
 	await tree.process_frame
 	assert_false(level._vignette.shown)
 	level.queue_free()
+
+
+func test_frozen_mirror_ship_still_reads_its_speed() -> void:
+	# a duel guest's ships are frozen mirrors moved by snapshots: velocity stays 0
+	var v := SpeedVignette.new()
+	tree.root.add_child(v)
+	var ship := _ship()
+	ship.freeze = true
+	v.track(ship, 1.0 / 30.0)
+	ship.global_position += Vector2(10, 0)  # 300 px/s
+	v.track(ship, 1.0 / 30.0)
+	assert_true(v.measured_speed() >= 290.0, "got %s" % v.measured_speed())
+	ship.queue_free()
+	v.queue_free()
