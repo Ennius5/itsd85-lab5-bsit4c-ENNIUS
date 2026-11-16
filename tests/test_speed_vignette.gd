@@ -102,8 +102,8 @@ func test_frozen_mirror_ship_still_reads_its_speed() -> void:
 
 
 func test_glow_band_is_thin() -> void:
-	# the band used to cover the outer 30% from centre to edge; the user asked for 1.7x thinner
-	assert_almost(1.0 - SpeedVignette.GLOW_START, 0.3 / 1.7, 0.001)
+	# the user's call from the phone: as unintrusive as possible, the outer 4% from centre to edge
+	assert_almost(1.0 - SpeedVignette.GLOW_START, 0.04, 0.001)
 	var v := SpeedVignette.new()
 	tree.root.add_child(v)
 	var mat := v.get_child(0).material as ShaderMaterial
