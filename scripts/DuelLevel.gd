@@ -222,6 +222,11 @@ func _count_down(delta: float) -> void:
 		_hud.show_hint(str(ceili(_countdown_left)), 1.0)
 
 
+## Both bays' markings, left then right.
+func arrival_bays() -> Array[ArrivalBay]:
+	return _arrivals.bays if _arrivals else super.arrival_bays()
+
+
 ## Each bay spawns on its own clock (see DuelArrivals). Replaces Level's single bay.
 func _update_arrivals(delta: float, in_the_way: Array[Node]) -> void:
 	_arrivals.tick(delta, in_the_way)

@@ -34,6 +34,7 @@ func test_level_select_locks() -> void:
 	var screen: Control = load("res://scenes/ui/LevelSelect.tscn").instantiate()
 	tree.root.add_child(screen)
 	var buttons := screen.get_node("%Grid").get_children()
+	buttons.pop_front()  # the Tutorial tile comes first
 	assert_eq(buttons.size(), 5)
 	if buttons.size() == 5:
 		assert_false((buttons[0] as Button).disabled, "level 1 open")
@@ -50,7 +51,7 @@ func test_level5_opens() -> void:
 	_setup_state(5)
 	var screen: Control = load("res://scenes/ui/LevelSelect.tscn").instantiate()
 	tree.root.add_child(screen)
-	var button := screen.get_node("%Grid").get_child(4) as Button
+	var button := screen.get_node("%Grid").get_child(5) as Button  # after the Tutorial tile
 	assert_false(button.disabled, "level 5 is playable")
 	screen.queue_free()
 	_restore_state()
@@ -423,3 +424,40 @@ func test_credits_name_the_orbitron_font() -> void:
 	assert_true(text.contains("Orbitron"))
 	assert_true(text.contains("SIL Open Font License"))
 	screen.free()
+
+
+func test_level_select_has_tutorial_tile() -> void:
+	_setup_state(1)
+	var screen: Control = load("res://scenes/ui/LevelSelect.tscn").instantiate()
+	tree.root.add_child(screen)
+	var tile := screen.get_node("%Grid").get_child(0) as Button
+	assert_eq(String(tile.name), "Tutorial")
+	assert_false(tile.disabled, "always open")
+	assert_true(tile.text.begins_with("Tutorial"))
+	screen.queue_free()
+	_restore_state()
+
+
+func test_first_offline_goes_to_tutorial() -> void:
+	_setup_state(1)
+	GameState.tutorial_seen = false
+	var screen: Control = load("res://scenes/ui/ModeSelect.tscn").instantiate()
+	screen.change_scenes = false
+	tree.root.add_child(screen)
+	(screen.get_node("%Offline") as Button).pressed.emit()
+	assert_eq(screen.last_target, GameState.TUTORIAL_SCENE)
+	assert_eq(GameState.mode, "offline")
+	screen.free()
+	_restore_state()
+
+
+func test_offline_after_tutorial_goes_to_level_select() -> void:
+	_setup_state(1)
+	GameState.tutorial_seen = true
+	var screen: Control = load("res://scenes/ui/ModeSelect.tscn").instantiate()
+	screen.change_scenes = false
+	tree.root.add_child(screen)
+	(screen.get_node("%Offline") as Button).pressed.emit()
+	assert_eq(screen.last_target, "res://scenes/ui/LevelSelect.tscn")
+	screen.free()
+	_restore_state()

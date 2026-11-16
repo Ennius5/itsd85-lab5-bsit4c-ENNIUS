@@ -6,6 +6,7 @@ const TOTAL_LEVELS := 5
 const CCTV_MEDIUM := 2
 const DUEL_MIN := 3  # shortest duel, in minutes
 const DUEL_MAX := 20  # longest duel, in minutes
+const TUTORIAL_SCENE := "res://scenes/levels/Tutorial.tscn"
 
 enum Difficulty { EASY, NORMAL, HARD }
 const SHIFT_SECONDS := {Difficulty.EASY: 600.0, Difficulty.NORMAL: 300.0, Difficulty.HARD: 150.0}
@@ -14,6 +15,7 @@ const DIFFICULTY_NAMES := {Difficulty.EASY: "Easy", Difficulty.NORMAL: "Normal",
 var save_path: String = "user://save.cfg"  # user:// is the app's private folder on the phone
 var unlocked_level: int = 1  # highest level the player may open
 var best_stars: Dictionary = {}  # level number -> best stars (1..3)
+var tutorial_seen := false  # the first Offline tap opens the tutorial until it has been started once
 var current_level: int = 1
 var mode: String = "offline"  # "offline" or "online"
 var last_result: Dictionary = {}  # filled when a level ends
@@ -47,6 +49,7 @@ func save_progress() -> void:
 	var cfg := ConfigFile.new()
 	cfg.set_value("progress", "unlocked_level", unlocked_level)
 	cfg.set_value("progress", "best_stars", best_stars)
+	cfg.set_value("progress", "tutorial_seen", tutorial_seen)
 	cfg.set_value("settings", "music_on", music_on)
 	cfg.set_value("settings", "sfx_on", sfx_on)
 	cfg.set_value("settings", "difficulty", difficulty)
@@ -66,6 +69,9 @@ func load_progress() -> void:
 	var stars: Variant = cfg.get_value("progress", "best_stars", {})
 	if stars is Dictionary:
 		best_stars = stars
+	var seen: Variant = cfg.get_value("progress", "tutorial_seen", false)
+	if seen is bool:
+		tutorial_seen = seen
 	var sound: Variant = cfg.get_value("settings", "sound_on", true)  # saves from before the split
 	var music: Variant = cfg.get_value("settings", "music_on", sound)
 	var sfx: Variant = cfg.get_value("settings", "sfx_on", sound)

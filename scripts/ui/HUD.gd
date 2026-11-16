@@ -4,6 +4,7 @@ extends CanvasLayer
 
 signal pause_pressed
 
+var hints_enabled := true  # the tutorial turns the short pop-up hints off: its signs say it all
 var _hint_left := 0.0
 
 @onready var _goal: Label = %Goal
@@ -72,7 +73,15 @@ func status_text() -> String:
 	return _status.text if _status.visible else ""
 
 
+## Shows or hides the shift clock, pay and served lines (the tutorial has no shift).
+func show_shift_lines(on: bool) -> void:
+	for label: Label in [_time, _pay, _customers]:
+		label.visible = on
+
+
 func show_hint(text: String, seconds: float) -> void:
+	if not hints_enabled:
+		return
 	_hint.text = text
 	_hint.visible = true
 	_hint_left = seconds

@@ -85,6 +85,7 @@ var last_pause_action := ""  # "restart" or "quit" when scene changes are off (t
 var pauses_tree := true  # false online: the pause menu opens but the match keeps running
 var _pause_menu := PauseMenu.new()
 var _cctv: CctvFilter
+var _vignette: SpeedVignette  # the edge glow that warns the selected ship is going too fast
 var _flung_at: Dictionary = {}  # ship or asteroid -> msec it was last flung out of a black hole
 
 @onready var _spaces: Node2D = $Spaces
@@ -207,9 +208,30 @@ func _driven_by_anyone(ship: Ship) -> bool:
 	return false
 
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
+	var mine: Variant = valets[0].ship if not valets.is_empty() else null
 	if _lot_edge:
-		_lot_edge.track(valets[0].ship if not valets.is_empty() else null)
+		_lot_edge.track(mine)
+	if _vignette:
+		_vignette.track(mine, delta)
+	for bay in arrival_bays():
+		bay.waiting = has_waiting_ship(bay)
+
+
+## The ARRIVALS markings in this lot. A duel overrides it with its two bays.
+func arrival_bays() -> Array[ArrivalBay]:
+	var bays: Array[ArrivalBay] = []
+	if _bay:
+		bays.append(_bay)
+	return bays
+
+
+## True when a ship that hasn't been picked up since it arrived sits in bay.
+func has_waiting_ship(bay: ArrivalBay) -> bool:
+	for ship: Ship in _ships.get_children():
+		if not ship.is_parked and not ship.driven_since_free and bay.touches(ship):
+			return true
+	return false
 
 
 func _physics_process(delta: float) -> void:
@@ -733,6 +755,10 @@ func _add_cctv() -> void:
 	add_child(_cctv)
 	move_child(_cctv, 0)
 	_pause_menu.cctv_changed.connect(_cctv.set_level)
+	_vignette = SpeedVignette.new()
+	_vignette.name = "SpeedVignette"
+	add_child(_vignette)
+	move_child(_vignette, 1)  # over the CCTV filter, under the HUD
 
 
 func _add_darkness() -> void:
@@ -993,12 +1019,18 @@ func close_pause() -> void:
 ## (closing How to Play first when it's open over the menu).
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_GO_BACK_REQUEST:
-		if _pause_menu.close_guide():
-			return
-		if _pause_menu.is_open():
-			close_pause()
-		else:
-			open_pause()
+		_on_back_gesture()
+
+
+## Android's back gesture: closes the guide, else toggles the pause menu. Godot calls _notification
+## on every script in the chain, so subclasses override this instead.
+func _on_back_gesture() -> void:
+	if _pause_menu.close_guide():
+		return
+	if _pause_menu.is_open():
+		close_pause()
+	else:
+		open_pause()
 
 
 func _on_pause_restart() -> void:

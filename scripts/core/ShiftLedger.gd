@@ -93,6 +93,13 @@ static func dent_cost(impact_speed: float) -> int:
 	return 5 + int((impact_speed - SAFE_IMPACT_SPEED) * 0.25)
 
 
+## The slowest impact speed (px/s) whose dent costs at least cost: the inverse of dent_cost.
+static func impact_speed_for_cost(cost: int) -> float:
+	if cost <= 5:
+		return SAFE_IMPACT_SPEED
+	return SAFE_IMPACT_SPEED + (cost - 5) / 0.25
+
+
 static func stars_for(total_earnings: int, silver: int, gold: int, won: bool) -> int:
 	if not won:
 		return 0

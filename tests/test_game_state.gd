@@ -179,3 +179,18 @@ func test_bad_duel_minutes_fall_back() -> void:
 	assert_eq(gs.duel_minutes, 3)
 	assert_eq(gs.last_ip, "")
 	gs.free()
+
+
+func test_tutorial_seen_saves_and_loads() -> void:
+	var gs := _fresh_state()
+	gs.load_progress()
+	assert_false(gs.tutorial_seen, "a new player hasn't seen it")
+	gs.tutorial_seen = true
+	gs.save_progress()
+	gs.free()
+	var reloaded := _new_state()
+	reloaded.load_progress()
+	assert_true(reloaded.tutorial_seen)
+	reloaded.reset_progress()
+	assert_true(reloaded.tutorial_seen, "resetting levels doesn't re-force the tutorial")
+	reloaded.free()

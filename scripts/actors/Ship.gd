@@ -307,6 +307,20 @@ func hull_points() -> PackedVector2Array:
 	return pts
 
 
+## How fast the fastest point on the hull moves (px/s): drift plus spin at the farthest corner.
+func danger_speed() -> float:
+	return linear_velocity.length() + absf(angular_velocity) * hull_reach()
+
+
+## The distance from the centre of mass to the farthest point of the hull (px).
+func hull_reach() -> float:
+	var pivot := to_global(center_of_mass)
+	var reach := 0.0
+	for p in hull_points():
+		reach = maxf(reach, pivot.distance_to(p))
+	return reach
+
+
 ## A ship whose owner wants it back glows until the valet picks it up, so it's easy to spot.
 func is_glowing() -> bool:
 	return customer != null and customer.requested and not customer.request_seen

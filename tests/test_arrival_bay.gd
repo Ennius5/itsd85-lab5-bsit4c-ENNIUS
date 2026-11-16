@@ -94,3 +94,63 @@ func test_ships_drive_through_the_bay_wall() -> void:
 	assert_true(ship.global_position.y < 300.0, "ship at %s" % ship.global_position)
 	ship.queue_free()
 	bay.queue_free()
+
+
+func test_bay_still_when_empty() -> void:
+	var bay := ArrivalBay.new()
+	tree.root.add_child(bay)
+	bay.waiting = false
+	await tree.process_frame
+	await tree.process_frame
+	assert_eq(bay.pulse(), 0.0)
+	bay.queue_free()
+
+
+func test_bay_pulse_moves_while_waiting() -> void:
+	var bay := ArrivalBay.new()
+	tree.root.add_child(bay)
+	bay.waiting = true
+	var seen := {}
+	for i in 30:
+		bay._process(1.0 / 30.0)
+		seen[snappedf(bay.pulse(), 0.1)] = true
+	assert_true(seen.size() >= 4, "the pulse rises and falls")
+	for v: float in seen:
+		assert_true(v >= 0.0 and v <= 1.0)
+	bay.queue_free()
+
+
+func test_bay_pulses_with_a_waiting_ship() -> void:
+	var real_save := GameState.save_path
+	GameState.save_path = "user://test_arrival_bay_save.cfg"
+	var level: Level = load("res://scenes/levels/Level01.tscn").instantiate()
+	level.change_scene_on_end = false
+	tree.root.add_child(level)
+	await tree.process_frame
+	await tree.process_frame
+	assert_true(level._bay.waiting, "the first customer waits in ARRIVALS")
+	level.select_ship(level.get_node("Ships").get_child(0))
+	await tree.process_frame
+	assert_false(level._bay.waiting, "picked up: no longer waiting")
+	level.free()
+	GameState.save_path = real_save
+
+
+func test_duel_bays_pulse() -> void:
+	var real_save := GameState.save_path
+	GameState.save_path = "user://test_arrival_bay_save.cfg"
+	var level: DuelLevel = load("res://scenes/levels/Duel.tscn").instantiate()
+	level.change_scene_on_end = false
+	level.session = NetSession.new()
+	tree.root.add_child(level)
+	await tree.process_frame
+	level._physics_process(DuelLevel.COUNTDOWN + 0.01)
+	await tree.process_frame
+	var bays := level.arrival_bays()
+	assert_eq(bays.size(), 2)
+	for bay in bays:
+		assert_true(bay.waiting, "%s has a waiting ship" % bay.name)
+	var session := level.session
+	level.free()
+	session.free()
+	GameState.save_path = real_save
