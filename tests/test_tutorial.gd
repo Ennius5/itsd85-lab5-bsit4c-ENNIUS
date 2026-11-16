@@ -212,3 +212,73 @@ func test_arrivals_marking_is_visible() -> void:
 		elif after_bay and node is Polygon2D:
 			assert_true(false, "%s draws over ARRIVALS" % node.name)
 	_done(level)
+
+
+func _finish(level: TutorialLevel) -> void:
+	_to_step_nine(level)
+	_select(level, level.spinner)
+	_tick(level)
+	level.spinner.angular_velocity = 0.0
+	_tick(level)
+	level._check_step(TutorialLevel.SPIN_EXPLAIN_SECONDS + 0.1)
+	level._return(level.spinner)
+	_tick(level)
+
+
+func test_complete_panel_appears() -> void:
+	var level := await _make()
+	_finish(level)
+	assert_eq(level.step, 13)
+	var panel := level.get_node_or_null("TutorialComplete") as TutorialComplete
+	assert_true(panel != null, "the complete panel shows")
+	if panel:
+		assert_true(panel.get_node("%HowToPlay") is Button)
+		assert_true(panel.get_node("%LevelSelect") is Button)
+		assert_true((panel.get_node("%Title") as Label).text == "Tutorial complete!")
+	assert_eq(GameState.last_result, {}, "no Result screen")
+	assert_eq(GameState.unlocked_level, 1, "nothing unlocked")
+	assert_eq(level._pointer.target, null)
+	_done(level)
+
+
+func test_complete_guide_opens_and_closes() -> void:
+	var level := await _make()
+	_finish(level)
+	var panel := level.get_node("TutorialComplete") as TutorialComplete
+	(panel.get_node("%HowToPlay") as Button).pressed.emit()
+	assert_true(panel.is_guide_open())
+	panel.close_guide()
+	assert_false(panel.is_guide_open())
+	assert_true(is_instance_valid(panel) and panel.is_inside_tree(), "back to the panel")
+	_done(level)
+
+
+func test_complete_level_select() -> void:
+	var level := await _make()
+	_finish(level)
+	var panel := level.get_node("TutorialComplete") as TutorialComplete
+	(panel.get_node("%LevelSelect") as Button).pressed.emit()
+	assert_eq(level.last_pause_action, "level_select")
+	_done(level)
+
+
+func test_back_gesture_after_complete() -> void:
+	var level := await _make()
+	_finish(level)
+	var panel := level.get_node("TutorialComplete") as TutorialComplete
+	panel.open_guide()
+	level.notification(Node.NOTIFICATION_WM_GO_BACK_REQUEST)
+	assert_false(panel.is_guide_open(), "back closes the guide first")
+	assert_eq(level.last_pause_action, "")
+	level.notification(Node.NOTIFICATION_WM_GO_BACK_REQUEST)
+	assert_eq(level.last_pause_action, "level_select")
+	assert_false(level._pause_menu.is_open(), "it doesn't pause a finished tutorial")
+	_done(level)
+
+
+func test_back_gesture_mid_tutorial_pauses_once() -> void:
+	var level := await _make()
+	level.notification(Node.NOTIFICATION_WM_GO_BACK_REQUEST)
+	assert_true(level._pause_menu.is_open(), "back pauses as in any level")
+	level.close_pause()
+	_done(level)

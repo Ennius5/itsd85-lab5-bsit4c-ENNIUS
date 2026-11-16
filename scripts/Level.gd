@@ -1019,12 +1019,18 @@ func close_pause() -> void:
 ## (closing How to Play first when it's open over the menu).
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_GO_BACK_REQUEST:
-		if _pause_menu.close_guide():
-			return
-		if _pause_menu.is_open():
-			close_pause()
-		else:
-			open_pause()
+		_on_back_gesture()
+
+
+## Android's back gesture: closes the guide, else toggles the pause menu. Godot calls _notification
+## on every script in the chain, so subclasses override this instead.
+func _on_back_gesture() -> void:
+	if _pause_menu.close_guide():
+		return
+	if _pause_menu.is_open():
+		close_pause()
+	else:
+		open_pause()
 
 
 func _on_pause_restart() -> void:

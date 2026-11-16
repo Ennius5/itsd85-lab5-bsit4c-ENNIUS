@@ -41,6 +41,7 @@ var _sign := TutorialSign.new()
 var _step_time := 0.0  # seconds in the current step
 var _forward_from := Vector2.ZERO  # step 4: where the drone was
 var _forward_dir := Vector2.UP
+var _complete: TutorialComplete  # the end panel, once every step is done
 
 
 func _ready() -> void:
@@ -56,6 +57,7 @@ func _ready() -> void:
 	add_child(_pointer)
 	_sign.name = "TutorialSign"
 	_ships.add_sibling(_sign)
+	completed.connect(_show_complete)
 	_enter_step(1)
 
 
@@ -99,6 +101,34 @@ func _update_sign() -> void:
 	_sign.visible = not driving
 	_hud.set_goal(text if driving else text.get_slice("
 ", 0))
+
+
+## Ends the tutorial: lets go of any ship and shows the complete panel instead of the lot's controls.
+func _show_complete() -> void:
+	release_ship()
+	_pointer.clear()
+	_sign.text = ""
+	_controls.set_driving(false)
+	_hud.hide()
+	_complete = TutorialComplete.new()
+	_complete.name = "TutorialComplete"
+	_complete.level_select_pressed.connect(_to_level_select)
+	add_child(_complete)
+
+
+func _to_level_select() -> void:
+	last_pause_action = "level_select"
+	if change_scene_on_end:
+		get_tree().change_scene_to_file(LEVEL_SELECT)
+
+
+## Back gesture: once complete it closes the guide, then leaves for Level Select; before that it
+## pauses as in any level.
+func _on_back_gesture() -> void:
+	if _complete == null:
+		super._on_back_gesture()
+	elif not _complete.close_guide():
+		_to_level_select()
 
 
 ## Advances through every step whose condition already holds.
