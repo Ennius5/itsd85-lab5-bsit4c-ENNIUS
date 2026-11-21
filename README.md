@@ -43,12 +43,22 @@ Latest APK: the **v1.0 release** on this repository's [Releases page](../../rele
 ## Playtest results
 Full action plan: [docs/playtest/action-plan.md](docs/playtest/action-plan.md). Kit: [docs/playtest/playtest-kit.md](docs/playtest/playtest-kit.md). Phone test matrix: [docs/playtest/phone-test-matrix.md](docs/playtest/phone-test-matrix.md).
 
-1. **Players got stuck on the controls and skipped the guide.** Fix: a guided 12-step Tutorial that opens on the first Offline tap, plus an ARRIVALS bay that pulses while a ship waits. _Retest: pending._
-2. **No warning before hitting a wall.** Fix: a red lot-edge glow when the driven ship nears a wall. _Retest: pending._
-3. **Players thought the game was stuck while owners were away.** Fix: return countdowns on parked ships and a HUD "waiting" line. _Retest: pending._
+10 testers (T1–T10) answered the 15-item feedback form. T1 and T2 were observed in full, and T3 and T4 were observed again in the retest.
+
+- **Ratings:**
+  - overall M = 4.27 / 5 and 4.1 stars;
+  - offline play, joining an online match, graphics, sound, readability and stability all scored 5.00;
+  - weakest: "unlocking made me want to keep playing" (3.00) and "understood the goal without help" (3.40).
+- **Completion:** 100% on every level. Level 4 (the black hole) needed the most attempts.
+
+1. **Players got stuck on the controls and skipped the guide** (reported by 10 of 10 testers). Fix: a guided 12-step Tutorial that opens on the first Offline tap, plus an ARRIVALS bay that pulses while a ship waits. **Retest:** both testers finished the tutorial on the first try and needed no help afterwards. Mean attempts per level fell from 7.1 to 3.3.
+2. **No warning before hitting a wall.** Fix: a red lot-edge glow when the driven ship nears a wall. **Retest:** no issue seen.
+3. **Players thought the game was stuck while owners were away.** Fix: return countdowns on parked ships and a HUD "waiting" line. **Retest:** no issue seen.
+
+The retest used two returning testers because no new ones were available.
 
 ## Credits
 See [docs/CREDITS.md](docs/CREDITS.md) (Kenney CC0 art and sound, ccMixter CC BY-NC 3.0 music, Orbitron SIL OFL font; ships and all other art original).
 
 ## Paper
-[docs/paper.pdf](docs/paper.pdf) (_in progress_). The LaTeX source (IEEE conference template, built on Overleaf) is [docs/paper/paper.tex](docs/paper/paper.tex).
+[docs/paper.pdf](docs/paper.pdf). The LaTeX source (IEEE conference template; compiles with Overleaf or Tectonic) is [docs/paper/paper.tex](docs/paper/paper.tex).

@@ -1,1 +1,27 @@
 tester,level,attempts,cleared,time_to_clear,stuck_or_confused,quotes,bugs,helped,round
+T1,1,5,Y,5:00,controls. Tester did not read the instructions on how to control the ship,"""How do I control this?""",None,Yes,1
+T1,2,7,Y,7:00,controls. Tester was still confused on how to stop the ship from rotating/moving through the stop buttons. Kept on playing via tapping the control buttons. Had a hard time handling the lopsided ships,,None,Yes,1
+T1,3,10,Y,7:20,Tester Kept getting a game over due to not being careful of the debris,,None,Yes,1
+T1,4,20,Y,8:20,Tester had a hard time keeping the ship in place due to the black hole. Finally figured out holding the stop buttons was the intended way for complete control,The asteroids were fun,None,Yes,1
+T1,5,7,Y,5:00,"Tester got confused when a ship was asking a specific parking lot. Due to not reading the instructions, had to point out that the level allowed for selecting parked ships. Tester kept hitting the pillars at high speed",What do I do? There is a spaceship already parked in what this one is asking,None,No,1
+T1,Online vs T2,,Lose,5:00,Tester played it like bumper cars,,None,No,1
+T2,1,2,Y,4:00,Tester was already familiar with these kinds of games,,None,No,1
+T2,2,3,Y,5:00,Tester was also not holding the stop buttons. Used the controls to manually stop instead,,None,No,1
+T2,3,5,Y,6:00,Tester figured out eventually how to stop to observe dark areas,,None,No,1
+T2,4,5,Y,7:00,Tester kept trying to move the immovable asteroids for a while,,None,No,1
+T2,5,,Y,4:00,Tester actually read the manual when they got confused about ships wanting occupied parking space,,None,No,1
+T2,Online vs T1,,Win,,"Played ""bumper cars"" with T1 and fought through who gets the least penalties",,None,No,1
+T3,Tutorial,1,Y,4:00,Tester read through the guide after the tutorial. Tutorial properly conveyed how to play,,None,No,2
+T3,1,3,Y,5:00,Wasn't stuck or confused,,None,No,2
+T3,2,3,Y,6:27,Wasn't stuck or confused,,None,No,2
+T3,3,4,Y,7:26,Wasn't stuck or confused,,None,No,2
+T3,4,6,Y,8:29,Wasn't stuck or confused,,None,No,2
+T3,5,3,Y,5:00,Wasn't stuck or confused,,None,No,2
+T3,Online vs T4,,Win,,Played bumper cars after 5 minutes of parking,,None,No,2
+T4,Tutorial,1,Y,3:30,Tester read through the guide after the tutorial. Actually taught themselves how to control the ship properly,,None,No,2
+T4,1,2,Y,5:34,Wasn't stuck or confused,,None,No,2
+T4,2,3,Y,5:44,Wasn't stuck or confused,,None,No,2
+T4,3,2,Y,6:00,Wasn't stuck or confused,,None,No,2
+T4,4,4,Y,9:29,Wasn't stuck or confused,,None,No,2
+T4,5,3,Y,4:00,Wasn't stuck or confused,,None,No,2
+T4,Online vs T3,,Lose,,Played bumper cars,,None,No,2

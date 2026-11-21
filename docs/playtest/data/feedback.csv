@@ -1,1 +1,11 @@
 tester,age_range,play_frequency,q1,q2,q3,q4,q5,q6,q7,q8,q9,q10,q11,q12,q13,q14,q15,liked_most,most_frustrating,level_too_easy_or_hard,bugs,change_one_thing,overall_stars,round
+T1,under 18,daily,3,3,4,4,3,4,5,5,3,5,5,5,5,4,4,graphics,controls,3,no,more levels,4,1
+T2,under 18,daily,4,3,4,4,3,4,5,5,3,5,5,5,5,4,4,graphics,controls,4,no,racing mode,4,1
+T3,18-24,daily,4,5,3,4,3,4,5,5,4,5,5,5,5,4,4,physics puzzle,controls,3,no,bumper cars mode,4,1
+T4,18-24,daily,4,3,4,4,3,4,5,5,4,5,5,5,5,4,4,physics puzzle,controls,3,no,racing mode,3,1
+T5,18-24,weekly,4,3,4,4,3,4,5,5,4,5,5,5,5,4,4,graphics,controls,4,no,racing mode,5,1
+T6,18-24,daily,4,3,4,4,3,4,5,5,4,5,5,5,5,4,4,mood of the game,controls,4,no,mine asteroids,4,1
+T7,18-24,weekly,4,3,4,4,3,4,5,5,4,5,5,5,5,4,4,mood of the game,controls,3,no,mine asteroids,5,1
+T8,18-24,weekly,4,3,4,4,3,4,5,5,4,5,5,5,5,4,4,graphics,controls,4,no,bigger levels,4,1
+T9,18-24,rarely,4,5,4,4,3,4,5,5,4,5,5,5,5,4,4,Easy to play hard to master,controls,3,no,ships can shoot,3,1
+T10,18-24,daily,4,3,4,4,3,4,5,5,4,5,5,5,5,4,4,simplicity of the concept,controls,4,no,racing mode,5,1

@@ -16,6 +16,8 @@
 \usepackage{listings}
 \usepackage{tikz}
 \usetikzlibrary{arrows.meta,positioning,fit,shapes.geometric}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
 \usepackage{url}
 
 \newcommand{\DATA}[1]{\textcolor{red}{\textbf{[DATA: #1]}}}
@@ -37,12 +39,12 @@
 \IEEEauthorblockA{\textit{BSIT 4C, College of Information Sciences and Computing}\\
 \textit{Central Mindanao University}\\
 Musuan, Bukidnon, Philippines\\
-\DATA{school email}}}
+\texttt{e.campomanes101848@gmail.com}}}
 
 \maketitle
 
 \begin{abstract}
-Casual mobile games often trade depth for simplicity, and student projects that add online play usually depend on servers they cannot afford to run. This paper reports the design, implementation and player evaluation of \game, a top-down zero-gravity valet-parking game for Android in which every ship is a rigid body pushed by thrusters drawn on its hull, so that each ship handles differently. The game was built in five weeks by one developer at zero cost with Godot~4.7 and GDScript. It offers a step-by-step tutorial, five levels that each add one new mechanic and unlock in order, an offline campaign, and a same-Wi-Fi one-versus-one duel in which the host phone runs the only simulation and decides the winner. \DATA{n} participants from outside the team played Levels 1--3 and one online match while thinking aloud, then rated the game on a 15-item, five-point Likert form. \DATA{overall M and SD; strongest and weakest items with M; completion rate of Levels 1--3}. Playtest feedback led to \DATA{number} changes, including a guided tutorial for players who skipped the written guide, and a retest with \DATA{n} new participants showed \DATA{retest outcome}. The results suggest that \DATA{one-sentence conclusion}.
+Casual mobile games often trade depth for simplicity, and student projects that add online play usually depend on servers they cannot afford to run. This paper reports the design, implementation and player evaluation of \game, a top-down zero-gravity valet-parking game for Android in which every ship is a rigid body pushed by thrusters drawn on its hull, so that each ship handles differently. The game was built in five weeks by one developer at zero cost with Godot~4.7 and GDScript. It offers a step-by-step tutorial, five levels that each add one new mechanic and unlock in order, an offline campaign, and a same-Wi-Fi one-versus-one duel in which the host phone runs the only simulation and decides the winner. Ten participants from outside the team played the campaign and an online duel, then rated the game on a 15-item, five-point Likert form. Two of these sessions were observed in full while participants thought aloud. The mean rating across all items was 4.27 ($SD$~=~0.07 across participants). Stability, offline play, joining a match, graphics, sound and readability all scored 5.00, while ``unlocking the next level made me want to keep playing'' (M~=~3.00) and ``I understood the goal without help'' (M~=~3.40) were the weakest. All ten participants named the controls as the most frustrating part, and both observed participants cleared all five levels, though one needed help on four of them. Playtesting led to five changes, the largest being a guided tutorial for players who skipped the written guide. In a retest with two returning participants, mean attempts per level fell from 7.1 to 3.3 and no help was needed. The results suggest that a forced, hands-on tutorial teaches zero-gravity touch controls better than a written guide, but that level unlocking alone does little to motivate players.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -60,7 +62,7 @@ The project was built under the constraints of a course laboratory: one develope
 \item \textbf{RQ3:} Which design changes did playtest feedback lead to, and did they improve the retest results?
 \end{itemize}
 
-This paper makes three contributions. First, it describes a \emph{thruster-marker pipeline} in which an artist paints thruster positions beside a ship's sprite and the handling follows automatically within a per-class force budget. Second, it describes a host-authoritative LAN duel for a physics game, built only on Godot's built-in ENet transport without a dedicated server. Third, it reports a playtest with \DATA{n} participants and the design changes it produced.
+This paper makes three contributions. First, it describes a \emph{thruster-marker pipeline} in which an artist paints thruster positions beside a ship's sprite and the handling follows automatically within a per-class force budget. Second, it describes a host-authoritative LAN duel for a physics game, built only on Godot's built-in ENet transport without a dedicated server. Third, it reports a playtest with ten participants and the design changes it produced.
 
 %=====================================================================
 \section{Related Work}
@@ -208,12 +210,12 @@ func save_progress() -> void:
 The duel uses \texttt{ENetMultiplayerPeer} on port 24557 between two phones on the same Wi-Fi, with no server. The host is authoritative: it runs all physics, collisions, scoring and the match timer. The guest sends its button states 30 times per second, and the host replies with state snapshots 20 times per second. On the guest, ships are frozen mirrors drawn 100~ms in the past by interpolating between snapshots, which hides jitter at the cost of a small, constant delay. A protocol version check runs during the handshake. A watchdog on each phone ends the match if nothing has arrived from the other phone for 3~s (10~s while a scene is loading) and returns the player to Mode Select with a message. The winner is decided only by the host and announced to both phones, so the two phones can never disagree and a modified guest cannot report a false score.
 
 \subsection{Android build}
-The game was exported as a debug-signed APK of about 84~MB with the Internet and Access Network State permissions, and installed directly on the test phones. It was tested on a Huawei LYA-L29 (Android~10) and \DATA{second phone model and Android version}; Appendix~C gives the phone test matrix.
+The game was exported as a debug-signed APK of about 84~MB with the Internet and Access Network State permissions, and installed directly on the test phones. It was tested on a Huawei Mate~20~Pro (LYA-L29, Android~10) and an Oppo A57 (2022; MediaTek Dimensity~810, 6.56-inch IPS LCD); Appendix~C gives the phone test matrix.
 
 %=====================================================================
 \section{Evaluation Method}
 \subsection{Participants}
-\DATA{n} participants from outside the development team took part. Table~\ref{tab:participants} summarizes their age ranges and how often they play mobile games. A further \DATA{n} new participants took part in the retest after the fixes.
+Ten participants (T1--T10) from outside the development team took part, eight of them students aged 18--24 and two under 18. Table~\ref{tab:participants} summarizes their age ranges and how often they play mobile games. No new participants were available after the fixes, so two returning participants (T3 and T4) took part in the retest.
 
 \begin{table}[t]
 \caption{Participant Profile}
@@ -224,15 +226,16 @@ The game was exported as a debug-signed APK of about 84~MB with the Internet and
 \toprule
  & First round & Retest \\
 \midrule
-Participants ($n$) & \DATA{} & \DATA{} \\
-Age under 18 / 18--24 / 25+ & \DATA{} & \DATA{} \\
-Play mobile games daily / weekly / rarely & \DATA{} & \DATA{} \\
+Participants ($n$) & 10 & 2 (returning) \\
+Age under 18 / 18--24 / 25+ & 2 / 8 / 0 & 0 / 2 / 0 \\
+Play mobile games daily / weekly / rarely & 6 / 3 / 1 & 2 / 0 / 0 \\
+Observed with think-aloud & 2 (T1, T2) & 2 (T3, T4) \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \subsection{Procedure}
-Each session lasted 15--20 minutes on a freshly installed build. Participants received a one-sentence brief, ``Please play as you normally would and say out loud what you are thinking,'' with no explanation of the controls or the goal. They played Levels 1--3 offline on the Normal difficulty and then one three-minute online duel against the developer, joining the developer's phone over the same Wi-Fi. The developer observed silently, helped only after a participant had been stuck for more than two minutes, and recorded every instance of help.
+Participants played a freshly installed build after a one-sentence brief, ``Please play as you normally would and say out loud what you are thinking,'' with no explanation of the controls or the goal. In the first round they played Levels 1--5 offline on the Normal difficulty, then a five-minute online duel against another participant over the same Wi-Fi, and filled in the feedback form. The first round had no tutorial. The developer fully observed two sessions (T1 and T2), observing silently, helping only after a participant had been stuck for more than two minutes, and recording every instance of help. The retest after the fixes followed the same procedure on the new build, starting with the tutorial, and was observed for T3 and T4.
 
 \subsection{Instrument and analysis}
 After playing, each participant completed the laboratory's 15-item feedback form on a five-point Likert scale (1~= strongly disagree, 5~= strongly agree) and six open questions. The developer completed an observation sheet that recorded, per level, the attempts, time to clear, points of confusion, quotes and bugs. Each Likert item was summarized by its mean ($M$), standard deviation ($SD$) and $n$, and interpreted with the bands 4.20--5.00 strongly agree, 3.40--4.19 agree, 2.60--3.39 neutral, 1.80--2.59 disagree and 1.00--1.79 strongly disagree; items below 3.5 were treated as problem areas. For each level the completion rate and mean attempts were computed. Open answers were coded into the themes controls, difficulty, clarity, bugs, online, and art and sound.
@@ -243,10 +246,10 @@ Every participant gave written consent before playing, and participants under 18
 %=====================================================================
 \section{Results}
 \subsection{Questionnaire}
-Table~\ref{tab:likert} lists the ratings for all 15 items. \DATA{two or three sentences: highest items, lowest items, any item below 3.5}.
+Table~\ref{tab:likert} lists the ratings for all 15 items. Six items reached the ceiling (M~=~5.00, ``strongly agree''): offline play, joining an online match, graphics, sound, readability and stability, the last matching the absence of any reported crash. Two items fell below the 3.5 threshold: understanding the goal without help (M~=~3.40, $SD$~=~0.84, the most varied item) and the motivating effect of unlocking (M~=~3.00, neutral). Online responsiveness (M~=~3.80) and the touch controls (M~=~3.90) were rated positively but lower than the other technical items. Answers were very uniform: ten items had no variance, and only five distinct answer patterns occurred among the ten forms. The mean overall star rating was 4.1 out of 5 ($SD$~=~0.74).
 
 \begin{table}[t]
-\caption{Feedback Form Results (5-point scale)}
+\caption{Feedback Form Results (5-point scale; items below 3.5 in bold)}
 \label{tab:likert}
 \centering
 \footnotesize
@@ -254,41 +257,55 @@ Table~\ref{tab:likert} lists the ratings for all 15 items. \DATA{two or three se
 \toprule
 \# & Statement & $M$ & $SD$ & $n$ \\
 \midrule
-1 & The game was fun to play. & \DATA{} & & \\
-2 & I understood the goal of each level without help. & \DATA{} & & \\
-3 & The touch controls were easy and responsive. & \DATA{} & & \\
-4 & Each level felt a little harder than the last, but fair. & \DATA{} & & \\
-5 & Unlocking the next level made me want to keep playing. & \DATA{} & & \\
-6 & The win/lose result screen clearly showed how I did. & \DATA{} & & \\
-7 & Offline mode worked smoothly. & \DATA{} & & \\
-8 & Joining an online match was easy. & \DATA{} & & \\
-9 & The online match felt responsive (little or no lag). & \DATA{} & & \\
-10 & The graphics were clear and attractive. & \DATA{} & & \\
-11 & The sound and music fit the game. & \DATA{} & & \\
-12 & Text and buttons were easy to read and tap. & \DATA{} & & \\
-13 & The game ran without crashes or freezes. & \DATA{} & & \\
-14 & I would play this game again. & \DATA{} & & \\
-15 & I would recommend this game to a friend. & \DATA{} & & \\
+1 & The game was fun to play. & 3.90 & 0.32 & 10 \\
+2 & I understood the goal of each level without help. & \textbf{3.40} & 0.84 & 10 \\
+3 & The touch controls were easy and responsive. & 3.90 & 0.32 & 10 \\
+4 & Each level felt a little harder than the last, but fair. & 4.00 & 0.00 & 10 \\
+5 & Unlocking the next level made me want to keep playing. & \textbf{3.00} & 0.00 & 10 \\
+6 & The win/lose result screen clearly showed how I did. & 4.00 & 0.00 & 10 \\
+7 & Offline mode worked smoothly. & 5.00 & 0.00 & 10 \\
+8 & Joining an online match was easy. & 5.00 & 0.00 & 10 \\
+9 & The online match felt responsive (little or no lag). & 3.80 & 0.42 & 10 \\
+10 & The graphics were clear and attractive. & 5.00 & 0.00 & 10 \\
+11 & The sound and music fit the game. & 5.00 & 0.00 & 10 \\
+12 & Text and buttons were easy to read and tap. & 5.00 & 0.00 & 10 \\
+13 & The game ran without crashes or freezes. & 5.00 & 0.00 & 10 \\
+14 & I would play this game again. & 4.00 & 0.00 & 10 \\
+15 & I would recommend this game to a friend. & 4.00 & 0.00 & 10 \\
+\midrule
+ & All items (mean of participant means) & 4.27 & 0.07 & 10 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \subsection{Level completion}
-Fig.~\ref{fig:completion} shows the completion rate of each level. \DATA{completion rates and mean attempts for Levels 1--3; any level below 60\% or above 4 attempts}.
+Every observed participant cleared every level in both rounds, so the completion rate was 100\% for Levels 1--5 (2 of 2 in each round). Attempts, however, show where the difficulty lay (Fig.~\ref{fig:completion}). In the first round, Levels 2--5 all needed more than four attempts on average, and Level 4, the black hole, needed the most (12.5; 20 for T1 alone). T1 needed help on Levels 1--4: with the stop controls, and finally discovering that \emph{holding} STOP gives full control near the black hole. In the feedback forms, five participants named Level 3 and five named Level 4 as too hard. Time spent per level ranged from 4 to 9.5 minutes in both rounds and did not fall in the retest, because each attempt still ran against the shift timer. Both online duels were played as ``bumper cars'': participants rammed each other's ships and competed over who took the fewest dent penalties, which the blame rule (the faster ship pays) turned into a contest of its own.
 
 \begin{figure}[t]
 \centering
-\fbox{\parbox[c][2.6cm][c]{0.85\columnwidth}{\centering\DATA{bar chart: completion rate (\%) for Levels 1, 2, 3; black and white, made in LibreOffice Calc and saved as \texttt{completion.pdf}}}}
-% Replace the box above with: \includegraphics[width=0.9\columnwidth]{completion.pdf}
-\caption{Completion rate per level (participants who cleared the level divided by participants who tried it).}
+\begin{tikzpicture}
+\begin{axis}[
+  ybar, bar width=7pt, width=\columnwidth, height=4.2cm,
+  ymin=0, ymax=16, ylabel={Mean attempts}, ylabel style={font=\scriptsize},
+  symbolic x coords={L1,L2,L3,L4,L5}, xtick=data,
+  tick label style={font=\scriptsize},
+  nodes near coords, nodes near coords style={font=\tiny},
+  legend style={font=\scriptsize, at={(0.02,0.97)}, anchor=north west, draw=none},
+  enlarge x limits=0.15]
+\addplot[fill=black!70] coordinates {(L1,3.5) (L2,5) (L3,7.5) (L4,12.5) (L5,7)};
+\addplot[fill=white, draw=black] coordinates {(L1,2.5) (L2,3) (L3,3) (L4,5) (L5,3)};
+\legend{{Round 1 (T1, T2)},{Retest (T3, T4)}}
+\end{axis}
+\end{tikzpicture}
+\caption{Mean attempts to clear each level by the observed participants, before and after the fixes. The completion rate was 100\% for every level in both rounds. Round~1 Level~5 has one value (T1) because T2's attempts were not recorded.}
 \label{fig:completion}
 \end{figure}
 
 \subsection{Themes from open answers}
-\DATA{counts per theme, with short quotes tagged by participant code, e.g. ``\ldots'' (T3)}.
+\textit{Controls} were the most frustrating point for all ten participants, and the observations show why. T1 asked ``How do I control this?'' (T1) on Level 1, and neither T1 nor T2 found that holding STOP and Stop Spin cancels motion; both tried to stop by firing the opposite thrusters by hand. \textit{Difficulty} was mentioned by all ten, who named Level 3 (five) or Level 4 (five) as too hard. \textit{Clarity} came up on Level 5, where a customer asked for a space that was already taken: ``What do I do? There is a spaceship already parked in what this one is asking'' (T1). T2 solved the same moment by opening the guide. \textit{Art and sound} were what six participants liked most (``graphics'' four, ``mood of the game'' two). The other four praised the gameplay itself (``physics puzzle'' two, ``easy to play, hard to master'' (T9), ``simplicity of the concept'' (T10)), and ``the asteroids were fun'' (T1). No participant reported a \textit{bug}, and no crash was seen. For \textit{online} play, the requested changes leaned toward competitive modes: a racing mode (four), ships that shoot (T9), a bumper-cars mode (T3), mining asteroids (two), and more or bigger levels (two).
 
 \subsection{Changes made and retest}
-Table~\ref{tab:actions} lists the issues found and the changes made. The most consequential change was a guided tutorial lot. Playtesters got stuck on the controls and tended to skip the illustrated How to Play guide, so written instructions alone did not work. The tutorial now opens on the first Offline tap and waits at each step until the player has done it, pointing at the exact button to press. \DATA{retest result for each fix}.
+Table~\ref{tab:actions} lists the issues found and the changes made. The most consequential change was a guided tutorial lot. Playtesters got stuck on the controls and tended to skip the illustrated How to Play guide, so written instructions alone did not work. The tutorial now opens on the first Offline tap and waits at each step until the player has done it, pointing at the exact button to press. In the retest, T3 and T4 each finished the tutorial on the first try (4:00 and 3:30). The observer noted that it ``properly conveyed how to play''. Both then opened the How to Play guide on their own, and neither got stuck or needed help on any level. Mean attempts fell on every level (Fig.~\ref{fig:completion}), from 7.1 to 3.3 per level overall, with the largest drop on Level 4 (12.5 to 5). No retest participant hit a wall, overshot a space or lost track of waiting customers, so the smaller fixes showed no remaining problems. The Level~5 confusion about occupied spaces did not recur, although it was not addressed directly.
 
 \begin{table}[t]
 \caption{Action Plan}
@@ -299,31 +316,58 @@ Table~\ref{tab:actions} lists the issues found and the changes made. The most co
 \toprule
 Issue & Reports & Change & Retest \\
 \midrule
-Stuck on the controls; guide skipped & \DATA{} & Guided 12-step tutorial; pulsing ARRIVALS bay & \DATA{} \\
-No warning before hitting the lot wall & dev. & Red lot-edge glow near walls & \DATA{} \\
-Unclear wait while owners are away & dev. & Return countdowns and a HUD waiting line & \DATA{} \\
-Thrust buttons held too long & dev. & ``Tap, don't hold'' tip in the guide & \DATA{} \\
-Speed hard to judge & dev. & Green--yellow--red speed glow & \DATA{} \\
+Stuck on the controls; guide skipped & 10/10 & Guided 12-step tutorial; pulsing ARRIVALS bay & Solved: tutorial first try, 0 helps \\
+No warning before hitting the lot wall & dev. & Red lot-edge glow near walls & No issue \\
+Unclear wait while owners are away & dev. & Return countdowns and a HUD waiting line & No issue \\
+Thrust buttons held too long & dev. & ``Tap, don't hold'' tip in the guide & No issue \\
+Speed hard to judge; pillars hit fast & dev., T1 & Green--yellow--red speed glow & No issue \\
+Occupied requested space (Level 5) & T1 & None (explained in guide) & Did not recur \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 %=====================================================================
 \section{Discussion}
-\textbf{RQ1 (motivation from unlocking).} \DATA{items 5 and 14 with M and SD; completion rates; what they say about the one-new-mechanic curve, compared with the difficulty-pacing findings in~\cite{raofernandes2022}}.
+\textbf{RQ1 (motivation from unlocking).} Unlocking alone did not clearly motivate players. Item~5 was neutral (M~=~3.00, $SD$~=~0.00) and the lowest item overall, even though participants would play again (item~14, M~=~4.00, $SD$~=~0.00) and gave 4.1 stars. Participants seem to have been driven by the challenge rather than by the unlocks. Every observed participant pushed through to Level~5, even after 20 attempts at Level~4, and their requests were for new modes, not more of the same levels. The one-new-mechanic curve was rated fair (item~4, M~=~4.00), but attempts show a spike at Level~4 rather than a steady climb. This is consistent with the finding that the shape of a difficulty curve, not only its height, affects motivation~\cite{raofernandes2022}. Smoothing that spike, or rewarding unlocks with something visible such as a new ship, would be the next step.
 
-\textbf{RQ2 (usability of the offline and online modes).} \DATA{items 3, 7, 8, 9, 12 and 13}. In particular, \DATA{whether item 9 shows that a 100~ms interpolation delay felt responsive on a LAN, compared with the latency-compensation literature~\cite{liu2022}}.
+\textbf{RQ2 (usability of the offline and online modes).} Both modes were usable. Offline play, joining a match, readability and stability all scored 5.00 (items 7, 8, 12 and 13), and no crash or bug was reported. The touch controls (item~3, M~=~3.90) were the weak point, as the open answers confirm. Online responsiveness (item~9) was rated 3.80, lower than the other technical items: on a LAN the 100~ms interpolation delay was acceptable but noticeable. This matches the latency-compensation literature, in which interpolation without client-side prediction trades a constant delay for smoothness~\cite{liu2022}. Both duels became bumper-car contests, which suggests the physics and the blame rule make the online mode fun in a way its designer had not planned.
 
-\textbf{RQ3 (effect of playtest-driven changes).} \DATA{whether the retest participants cleared the first steps without help and how the problem items changed}.
+\textbf{RQ3 (effect of playtest-driven changes).} After the tutorial was added, both retest participants finished it on the first try, needed no help on any level, and took fewer than half the attempts of the first round (3.3 against 7.1 per level). The written guide, which first-round players skipped, was read voluntarily \emph{after} the tutorial. The tutorial therefore worked as an entry point to the guide rather than a replacement for it. The two weak items (2 and 5) were not re-measured, because the retest participants did not fill in a second form.
 
-\textbf{Limitations.} The sample was small and drawn from fellow students, so the results may not generalize to other players. Only Android was tested, on \DATA{two} phone models. One developer built and evaluated the game, which may bias the observation notes. Online play was tested only on a shared local network, without internet matchmaking. Each session was short, so long-term motivation was not measured.
+\textbf{Limitations.} The sample was small and drawn from fellow students, so the results may not generalize to other players. Only two sessions per round were observed in full. The retest used returning participants because no new testers were available, so part of the improvement may come from their earlier exposure to the game rather than from the fixes. The questionnaire answers were very uniform, with ten items at zero variance, which suggests a ceiling effect or answers influenced by each other. The form also used a single-item measure per construct. Only Android was tested, on two phone models. One developer built and evaluated the game, which may bias the observation notes. Online play was tested only on a shared local network, without internet matchmaking. Each session was short, so long-term motivation was not measured.
 
 %=====================================================================
 \section{Conclusion and Future Work}
-\DATA{main finding in two sentences}. Future work includes internet play through a self-hosted Nakama server, client-side prediction for the guest phone, an accessibility pass with a colour-blind-safe palette for the neon cues, and a larger study across several sessions.
+\game\ met the laboratory's requirements with free tools and no server, and players rated it highly for stability, presentation and both modes (overall M~=~4.27). Its zero-gravity controls were the one consistent obstacle, and a forced, hands-on tutorial overcame it, halving the attempts per level in the retest, while unlocking levels alone did little to motivate players. Future work includes a competitive racing or bumper-cars mode, which participants asked for most, a smoother difficulty step into Level~4, internet play through a self-hosted Nakama server, client-side prediction for the guest phone, an accessibility pass with a colour-blind-safe palette for the neon cues, and a larger study across several sessions.
+
+\appendices
+\section{Instruments}
+The consent slip, facilitator procedure, observation sheet and feedback form are reproduced in full in the repository (\texttt{docs/playtest/playtest-kit.md}). The form's 15 statements appear in Table~\ref{tab:likert}. Its open questions were: (1)~what did you like most; (2)~what was the most frustrating or confusing moment; (3)~which level was too easy or too hard, and why; (4)~did anything not work as expected; (5)~if you could change one thing, what would it be; and (6)~an overall 1--5 star rating. All raw answers are in \texttt{docs/playtest/data/feedback.csv} and \texttt{observations.csv}.
+
+\section{Observation Summary}
+\begin{table}[h]
+\caption{Observed Sessions: Attempts per Level (help given)}
+\label{tab:obs}
+\centering
+\footnotesize
+\begin{tabular}{@{}lcccccl@{}}
+\toprule
+Participant & Tut. & L1 & L2 & L3 & L4 & L5 \\
+\midrule
+T1 (round 1) & -- & 5 (H) & 7 (H) & 10 (H) & 20 (H) & 7 \\
+T2 (round 1) & -- & 2 & 3 & 5 & 5 & n.r. \\
+T3 (retest) & 1 & 3 & 3 & 4 & 6 & 3 \\
+T4 (retest) & 1 & 2 & 3 & 2 & 4 & 3 \\
+\bottomrule
+\end{tabular}\\[2pt]
+{\scriptsize H = helped after more than 2 minutes stuck; n.r. = cleared, attempts not recorded. Online duels: T2 beat T1, T3 beat T4.}
+\end{table}
+
+\section{Phone Test Matrix}
+Both phones ran the same debug APK. The full matrix (install, first launch, all levels, save after force-close, airplane mode, hosting, joining, disconnect handling) is in \texttt{docs/playtest/phone-test-matrix.md}. Phone~1 was a Huawei Mate~20~Pro (LYA-L29, Android~10, Kirin~980, 6.39-inch OLED); phone~2 was an Oppo A57 (2022; MediaTek Dimensity~810, 6~GB RAM, 6.56-inch IPS LCD).
 
 \section*{Acknowledgment}
-The author thanks the course instructor, Rinante M. Buntod, and the playtest participants (T1--T\DATA{n}). Claude (Anthropic), used through Claude Code, served as a programming assistant for implementation, automated tests and documentation, and helped draft this paper; the author directed the design, drew the ship art, ran the playtests, and checked and edited all text and code.
+The author thanks the course instructor, Rinante M. Buntod, and the playtest participants (T1--T10). Claude (Anthropic), used through Claude Code, served as a programming assistant for implementation, automated tests and documentation, and helped draft this paper; the author directed the design, drew the ship art, ran the playtests, and checked and edited all text and code.
 
 %=====================================================================
 % References: every entry marked VERIFY must be checked against the publisher page
