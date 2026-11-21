@@ -39,7 +39,7 @@
 \IEEEauthorblockA{\textit{BSIT 4C, College of Information Sciences and Computing}\\
 \textit{Central Mindanao University}\\
 Musuan, Bukidnon, Philippines\\
-\DATA{school email}}}
+\texttt{e.campomanes101848@gmail.com}}}
 
 \maketitle
 
@@ -210,7 +210,7 @@ func save_progress() -> void:
 The duel uses \texttt{ENetMultiplayerPeer} on port 24557 between two phones on the same Wi-Fi, with no server. The host is authoritative: it runs all physics, collisions, scoring and the match timer. The guest sends its button states 30 times per second, and the host replies with state snapshots 20 times per second. On the guest, ships are frozen mirrors drawn 100~ms in the past by interpolating between snapshots, which hides jitter at the cost of a small, constant delay. A protocol version check runs during the handshake. A watchdog on each phone ends the match if nothing has arrived from the other phone for 3~s (10~s while a scene is loading) and returns the player to Mode Select with a message. The winner is decided only by the host and announced to both phones, so the two phones can never disagree and a modified guest cannot report a false score.
 
 \subsection{Android build}
-The game was exported as a debug-signed APK of about 84~MB with the Internet and Access Network State permissions, and installed directly on the test phones. It was tested on a Huawei LYA-L29 (Android~10) and \DATA{second phone model and Android version}; Appendix~C gives the phone test matrix.
+The game was exported as a debug-signed APK of about 84~MB with the Internet and Access Network State permissions, and installed directly on the test phones. It was tested on a Huawei Mate~20~Pro (LYA-L29, Android~10) and an Oppo A57 (2022; MediaTek Dimensity~810, 6.56-inch IPS LCD); Appendix~C gives the phone test matrix.
 
 %=====================================================================
 \section{Evaluation Method}
@@ -364,7 +364,7 @@ T4 (retest) & 1 & 2 & 3 & 2 & 4 & 3 \\
 \end{table}
 
 \section{Phone Test Matrix}
-Both phones ran the same debug APK. The full matrix (install, first launch, all levels, save after force-close, airplane mode, hosting, joining, disconnect handling) is in \texttt{docs/playtest/phone-test-matrix.md}. Phone~1 was a Huawei LYA-L29 (Android~10); phone~2 was \DATA{second phone model and Android version}.
+Both phones ran the same debug APK. The full matrix (install, first launch, all levels, save after force-close, airplane mode, hosting, joining, disconnect handling) is in \texttt{docs/playtest/phone-test-matrix.md}. Phone~1 was a Huawei Mate~20~Pro (LYA-L29, Android~10, Kirin~980, 6.39-inch OLED); phone~2 was an Oppo A57 (2022; MediaTek Dimensity~810, 6~GB RAM, 6.56-inch IPS LCD).
 
 \section*{Acknowledgment}
 The author thanks the course instructor, Rinante M. Buntod, and the playtest participants (T1--T10). Claude (Anthropic), used through Claude Code, served as a programming assistant for implementation, automated tests and documentation, and helped draft this paper; the author directed the design, drew the ship art, ran the playtests, and checked and edited all text and code.

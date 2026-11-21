@@ -5,7 +5,7 @@ The handout's checklist, run on two different phones with the build being submit
 **Build tested:** `ParkinSpace-playtest-2026-11-16.apk` (debug-signed, `main` at `b698f7b`)
 **How to fill:** write **Pass**, **Fail** (with a note), or **–** (not tested yet), plus the date.
 
-| Test | Phone 1: Huawei LYA-L29 (Mate 20 Pro), Android 10 | Phone 2: _model, Android version, screen_ |
+| Test | Phone 1: Huawei LYA-L29 (Mate 20 Pro), Android 10 | Phone 2: Oppo A57 (2022), MediaTek Dimensity 810, 6 GB RAM, 6.56" IPS LCD |
 |---|---|---|
 | App installs and opens | Pass (2026-11-16, tutorial build installed with `adb install -r` and played) | |
 | Layout fits the screen, nothing cut off (notch side too) | | |
